@@ -1,0 +1,12 @@
+@Override
+public int treeHeight() {
+
+    int height = findHeight(root);
+    return height;
+
+}
+
+private int findHeight(BstNode<E> node)
+{
+    return node == null ? -1 : 1 + Math.max(findHeight(node.left), findHeight(node.right));
+}
