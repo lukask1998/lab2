@@ -1,0 +1,170 @@
+/**
+ * Grąžinamas aibės poaibis iki elemento.
+ *
+ * @param element - Aibės elementas.
+ * @return Grąžinamas aibės poaibis iki elemento.
+ */
+@Override
+public SetADT<E> headSet(E element) {
+    SetADT<E> poaibis = new BstSetKTU<>();
+    for (E e : this) {
+        if (e.compareTo(element) <= 0) {
+            poaibis.add(e);
+        }
+    }
+    return poaibis;
+    //throw new UnsupportedOperationException("Studentams reikia realizuoti headSet()");
+}
+
+/**
+ * Grąžinamas aibės poaibis nuo elemento element1 iki element2.
+ *
+ * @param element1 - pradinis aibės poaibio elementas.
+ * @param element2 - galinis aibės poaibio elementas.
+ * @return Grąžinamas aibės poaibis nuo elemento element1 iki element2.
+ */
+@Override
+public SetADT<E> subSet(E element1, E element2) {
+    SetADT<E> poaibis = new BstSetKTU<>();
+    for (E e : this) {
+        if (e.compareTo(element1) >= 0 && e.compareTo(element2) <= 0) {
+            poaibis.add(e);
+        }
+    }
+    return poaibis;
+    //throw new UnsupportedOperationException("Studentams reikia realizuoti subSet()");
+}
+
+/**
+ * Grąžinamas aibės poaibis nuo elemento.
+ *
+ * @param element - Aibės elementas.
+ * @return Grąžinamas aibės poaibis nuo elemento.
+ */
+@Override
+public SetADT<E> tailSet(E element) {
+    SetADT<E> poaibis = new BstSetKTU<>();
+    for (E e : this) {
+        if (e.compareTo(element) >= 0) {
+            poaibis.add(e);
+        }
+    }
+    return poaibis;
+    //throw new UnsupportedOperationException("Studentams reikia realizuoti tailSet()");
+}
+
+public SortedSetADT<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
+
+    SortedSetADT<E> subSet = new BstSetKTU();
+    BstNode<E> node = root;
+
+    int cmp = c.compare(fromElement, node.element);
+    if (cmp < 0){        
+        findSub(node, subSet, fromElement, toElement, fromInclusive, toInclusive);
+        node = node.left;
+    }
+    else if (cmp > 0){
+        node = node.right;
+    }
+    findSub(node, subSet, fromElement, toElement, fromInclusive, toInclusive);    
+    return subSet; 
+}
+
+/**
+ * Adds all of the elements in the specified collection to this set.
+ */
+public boolean addAll(BstSetKTU<? extends E> c) {
+
+    for (E e : c) {    
+        root = addRecursive(e, root);
+    }
+
+    return false;
+}
+
+/**
+ * Returns true if this set contains all of the elements of the specified collection.
+ */
+public boolean ContainsAll(BstSetKTU<?> c)
+{
+
+    for (Comparable<?> e : c) {    
+        if (e != c ) return false;
+    }
+
+    return true;
+
+}
+
+private void findSub(BstNode<E> node, SortedSetADT<E> subSet, E fromElement, E toElement, boolean fromInclusive, boolean toInclusive) {
+    if (node == null) {
+        return;
+    }
+    else if (node.element == toElement) {
+        if (toInclusive) {
+            subSet.add(node.element); 
+        }
+
+        if (node.left != null) {
+            if (c.compare(fromElement, node.left.element) < 0) {
+                findSub(node.left, subSet, fromElement, toElement, fromInclusive, toInclusive);
+            }
+        }
+        return;
+    }
+
+    if (node.element.compareTo(toElement) < 0) {
+        if (!fromInclusive) {
+            if (node.element != fromElement) { subSet.add(node.element); } }
+        else { subSet.add(node.element); }
+    }
+
+    findSub(node.right, subSet, fromElement, toElement, fromInclusive, toInclusive);
+
+    if (node.left != null) {
+        if (c.compare(fromElement, node.left.element) < 0) {
+            findSub(node.left, subSet, fromElement, toElement, fromInclusive, toInclusive);
+        }
+    }
+}
+
+/**
+ * Returns a view of the portion of this set whose elements are greater than or equal to fromElement.
+ */
+@Override
+public SortedSetADT<E> tailset(E fromElement) {
+
+    SortedSetADT<E> subSet = new BstSetKTU();
+    BstNode<E> node = root;
+
+    int cmp = c.compare(fromElement, node.element);
+    if (cmp < 0){        
+        findSub(node, subSet, fromElement);
+        node = node.left;
+    }
+    else if (cmp > 0){
+        node = node.right;
+    }
+
+    findSub(node, subSet, fromElement);    
+
+    return subSet; 
+}
+
+private void findSub(BstNode<E> node, SortedSetADT<E> subSet, E fromElement){
+    if (node == null) {
+        return;
+    }
+
+    if (node.element.compareTo(fromElement) >= 0) {
+        subSet.add(node.element);
+    }
+
+    findSub(node.right, subSet, fromElement);
+
+    if (node.left != null) {
+        if (c.compare(fromElement, node.left.element) < 0) {
+            findSub(node.left, subSet, fromElement);
+        }
+    }
+}
